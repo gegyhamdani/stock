@@ -1,7 +1,16 @@
 import React from 'react';
+import Typography from '@material-ui/core/Typography';
+
+import Pages from '../src/templates/Pages/Pages';
 
 const Home = () => {
-  return <div />;
+  return (
+    <Pages>
+      <Typography variant="h2" gutterBottom>
+        Web App
+      </Typography>
+    </Pages>
+  );
 };
 
 Home.propTypes = {};
