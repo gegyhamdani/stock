@@ -137,6 +137,20 @@ const StockLayout = () => {
         </Carousel>
       </div>
       <h2>Calculation Form</h2>
+      <div className={`${styles['calculation-form']}`}>
+        <div
+          className={`${styles['calculation-item']}`}
+          style={{ backgroundColor: '#E9F3FF' }}
+        >
+          Test
+        </div>
+        <div
+          className={`${styles['calculation-item']}`}
+          style={{ backgroundColor: '#FEECE9' }}
+        >
+          Test
+        </div>
+      </div>
     </>
   );
 };
