@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Axios from 'axios';
-import Carousel, { consts } from 'react-elastic-carousel';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 
 import styles from './index.module.css';
@@ -14,15 +13,9 @@ const StockLayout = () => {
   const [suggestion, setSuggestion] = useState([]);
   const [suggestionAvail, setSuggestionAvail] = useState(false);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
   const timeoutHandler = useRef(null);
   const timeoutDuration = 1000;
-
-  const breakPoints = [
-    { width: 1, itemsToShow: 1 },
-    { width: 550, itemsToShow: 2 },
-    { width: 768, itemsToShow: 3 },
-    { width: 1200, itemsToShow: 4 }
-  ];
 
   const matchSearch = value => {
     const { ticker_name: tickerName } = value;
@@ -30,7 +23,7 @@ const StockLayout = () => {
   };
 
   useEffect(() => {
-    if (search.length <= 2) return;
+    if (search.length <= 1 && !loading) return;
     if (timeoutHandler.current) clearTimeout(timeoutHandler);
     timeoutHandler.current = setTimeout(() => {
       setSuggestion(options.filter(matchSearch));
@@ -38,16 +31,18 @@ const StockLayout = () => {
   }, [search]);
 
   useEffect(() => {
-    if (options.filter(matchSearch).length > 0) return setSuggestionAvail(true);
+    if (options.filter(matchSearch).length > 0 && !loading)
+      return setSuggestionAvail(true);
     return setSuggestionAvail(false);
-  }, [search]);
+  }, [search, loading]);
 
   useEffect(() => {
-    if (search.length > 1) return setDisplay(true);
+    if (search.length > 1 && !loading) return setDisplay(true);
     return setDisplay(false);
-  }, [search]);
+  }, [search, loading]);
 
   useEffect(() => {
+    setLoading(true);
     const KEY =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxNDgsInVzZXJuYW1lIjoidGVzQGFza2xvcmEuYWkiLCJleHAiOjE1OTM5NDIzNzgsImVtYWlsIjoidGVzQGFza2xvcmEuYWkiLCJvcmlnX2lhdCI6MTU5Mzc2OTU3OH0.UvU4hXoVfZ22fAiTFrQQ4HEnV4FjaoGp6LPRFtZlvY0';
 
@@ -57,6 +52,7 @@ const StockLayout = () => {
     Axios.get(URL, { headers: { Authorization: `Bearer ${KEY}` } })
       .then(response => {
         setOptions(response.data.results);
+        setLoading(false);
       })
       .catch(() => {});
   }, []);
@@ -70,23 +66,18 @@ const StockLayout = () => {
     setDisplay(false);
   };
 
-  const arrowCarousel = ({ type, onClick, isEdge }) => {
-    const pointer =
-      type === consts.PREV ? (
-        <FaCaretLeft size={40} />
-      ) : (
-        <FaCaretRight size={40} />
+  const getSuggestionItem = () => {
+    return suggestion.map((val, i) => {
+      return (
+        <div
+          className={styles.item}
+          style={{ backgroundColor: '#B4D7FF' }}
+          key={i.toString()}
+        >
+          {val.ticker_name}
+        </div>
       );
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        disabled={isEdge}
-        className={`${styles['button-carousel']}`}
-      >
-        {pointer}
-      </button>
-    );
+    });
   };
 
   return (
@@ -125,34 +116,7 @@ const StockLayout = () => {
       >
         Click to See the Graph
       </h4>
-      <div className={`${styles['item-container']}`}>
-        <Carousel
-          breakPoints={breakPoints}
-          renderPagination={() => {
-            return <div />;
-          }}
-          renderArrow={arrowCarousel}
-        >
-          <div className={styles.item} style={{ backgroundColor: '#B4D7FF' }}>
-            One
-          </div>
-          <div className={styles.item} style={{ backgroundColor: '#B4D7FF' }}>
-            Two
-          </div>
-          <div className={styles.item} style={{ backgroundColor: '#B4D7FF' }}>
-            Three
-          </div>
-          <div className={styles.item} style={{ backgroundColor: '#FFC0BA' }}>
-            Four
-          </div>
-          <div className={styles.item} style={{ backgroundColor: '#FFC0BA' }}>
-            Five
-          </div>
-          <div className={styles.item} style={{ backgroundColor: '#FFC0BA' }}>
-            Six
-          </div>
-        </Carousel>
-      </div>
+
       <h2>Calculation Form</h2>
       <div className={`${styles['calculation-form']}`}>
         <div
