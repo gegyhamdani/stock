@@ -4,16 +4,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Axios from 'axios';
 import Carousel, { consts } from 'react-elastic-carousel';
+import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 
 import styles from './index.module.css';
 
 const StockLayout = () => {
   const [display, setDisplay] = useState(false);
   const [options, setOptions] = useState([]);
-  const [data, setData] = useState([]);
+  const [suggestion, setSuggestion] = useState([]);
+  const [suggestionAvail, setSuggestionAvail] = useState(false);
   const [search, setSearch] = useState('');
   const timeoutHandler = useRef(null);
-  const timeoutDuration = 3000;
+  const timeoutDuration = 1000;
 
   const breakPoints = [
     { width: 1, itemsToShow: 1 },
@@ -31,8 +33,13 @@ const StockLayout = () => {
     if (search.length <= 2) return;
     if (timeoutHandler.current) clearTimeout(timeoutHandler);
     timeoutHandler.current = setTimeout(() => {
-      setData(options.filter(matchSearch));
+      setSuggestion(options.filter(matchSearch));
     }, timeoutDuration);
+  }, [search]);
+
+  useEffect(() => {
+    if (options.filter(matchSearch).length > 0) return setSuggestionAvail(true);
+    return setSuggestionAvail(false);
   }, [search]);
 
   useEffect(() => {
@@ -64,7 +71,12 @@ const StockLayout = () => {
   };
 
   const arrowCarousel = ({ type, onClick, isEdge }) => {
-    const pointer = type === consts.PREV ? '<' : '>';
+    const pointer =
+      type === consts.PREV ? (
+        <FaCaretLeft size={40} />
+      ) : (
+        <FaCaretRight size={40} />
+      );
     return (
       <button
         type="button"
@@ -107,7 +119,12 @@ const StockLayout = () => {
           </div>
         )}
       </div>
-      <h4>Click to See the Graph</h4>
+      <h4
+        style={{ marginTop: display && suggestionAvail ? '220px' : 0 }}
+        className={styles.title}
+      >
+        Click to See the Graph
+      </h4>
       <div className={`${styles['item-container']}`}>
         <Carousel
           breakPoints={breakPoints}
