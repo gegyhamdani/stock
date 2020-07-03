@@ -34,7 +34,7 @@
   .autoContainer {
     position: absolute;
     border: 1px solid #d4d4d4;
-    border-bottom: none;
+    border-bottom: 1px solid #d4d4d4; 
     border-top: none;
     z-index: 99;
     top: 100%;
