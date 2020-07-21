@@ -12,7 +12,7 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.19.2",
     "fontsource-roboto": "^2.1.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "next": "9.4.4",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
